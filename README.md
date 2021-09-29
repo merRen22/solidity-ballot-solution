@@ -11,3 +11,5 @@ This is a solution to the Voting problem given in the [solidity offical document
 2. Set up env
 
 3. Compile -> `npx hardhat compile`
+
+4. deployo to your fav testnet `node scripts/deploy.js --network rinkeby`

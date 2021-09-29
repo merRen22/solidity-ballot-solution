@@ -26,7 +26,8 @@ contract Ballot {
     // A dynamically-sized array of `Proposal` structs.
     Proposal[] public proposals;
 
-    /// Create a new ballot to choose one of `proposalNames`.
+    // Create a new ballot to choose one of `proposalNames`.
+    // tip bytes32 > string because of less gas
     constructor(bytes32[] memory proposalNames) {
         chairperson = msg.sender;
         voters[chairperson].weight = 1;
