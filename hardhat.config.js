@@ -27,7 +27,7 @@ module.exports = {
       url: process.env.INFURA_NET,
       accounts: [`0x${process.env.WALLET_PRIVATE_KEY}`],
       // what this and what should i put 🤔
-      gas: 2100000,
+      gas: 1000000,
       gasPrice: 8000000000,
     },
   },

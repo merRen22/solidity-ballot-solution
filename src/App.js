@@ -12,6 +12,22 @@ function App() {
     await window.ethereum.request({ method: 'eth_requestAccounts' });
   }
 
+  async function getChairperson() {
+    if (typeof window.ethereum !== 'undefined') {
+      await requestAccount();
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      console.log({ provider });
+      const signer = provider.getSigner();
+      console.log({ signer });
+      const contract = new ethers.Contract(ballotAddress, Ballot.abi, signer);
+      const theBoss = await contract.chairperson({
+        gasLimit: 300000,
+        gasPrice: ethers.utils.parseUnits('100', 'gwei'),
+      });
+      console.log(`The chairperson account is => ${theBoss} 🎉`);
+    }
+  }
+
   async function getProposals() {
     if (typeof window.ethereum !== 'undefined') {
       await requestAccount();
@@ -21,7 +37,10 @@ function App() {
       console.log({ signer });
       const contract = new ethers.Contract(ballotAddress, Ballot.abi, signer);
       const proposals = await contract.proposals(
-        ethers.utils.formatBytes32String('')
+        ethers.utils.formatBytes32String(''),
+        {
+          gasLimit: 21000,
+        }
       );
       console.log(`the winning proposal is => ${proposals.length()} 🎉`);
     }
@@ -48,6 +67,8 @@ function App() {
         <button onClick={getProposals}>Get Proposals</button>
 
         <button onClick={callWinnerName}>Get the winner</button>
+
+        <button onClick={getChairperson}>Whos in charge ?</button>
 
         <a
           className="Author"
