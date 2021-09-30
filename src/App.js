@@ -59,6 +59,78 @@ function App() {
     }
   }
 
+  async function interactWithBlockchain() {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+
+    // Look up the current block number
+    await provider.getBlockNumber();
+    // get balance of account
+    const balance = await provider.getBalance('ethers.eth');
+    // update balance from wei to ether 👇
+    console.log(ethers.utils.formatEther(balance));
+    // converting ether as string number to wei ( BigNumber)
+    console.log(ethers.utils.parseEther('1.0'));
+
+    // notes on how to use ethers 👇
+
+    // send tokens to someone
+    const tx = signer.sendTransaction({
+      to: 'johny.bravo.eth', // 👈 ens https://app.ens.domains/
+      value: ethers.utils.parseEther('1.0'),
+    });
+
+    //👀👀👀👀👀
+    // lsitening on events happening on a contract
+    let someRandomCotract;
+
+    someRandomCotract.on('Transfer', (from, to, amount, event) => {
+      console.log(`${from} sent ${formatEther(amount)} to ${to}`);
+      // The event object contains the verbatim log data, the
+      // EventFragment and functions to fetch the block,
+      // transaction and receipt and event functions
+    });
+
+    // A filter for when a specific address receives tokens
+    myAddress = '0x8ba1f109551bD432803012645Ac136ddd64DBA72';
+    filter = daiContract.filters.Transfer(null, myAddress);
+    // {
+    //   address: 'dai.tokens.ethers.eth',
+    //   topics: [
+    //     '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef',
+    //     null,
+    //     '0x0000000000000000000000008ba1f109551bd432803012645ac136ddd64dba72'
+    //   ]
+    // }
+
+    // Receive an event when that filter occurs 👇 :0 great way to get information
+    daiContract.on(filter, (from, to, amount, event) => {
+      // The to will always be "address"
+      console.log(`I got ${formatEther(amount)} from ${from}.`);
+    });
+
+    // query infromation about trasnaccions
+
+    // Get the address of the Signer
+    myAddress = await signer.getAddress();
+    // '0x8ba1f109551bD432803012645Ac136ddd64DBA72'
+
+    // Filter for all token transfers from me
+    filterFrom = daiContract.filters.Transfer(myAddress, null);
+
+    // Filter for all token transfers to me
+    filterTo = daiContract.filters.Transfer(null, myAddress);
+
+    // List all transfers sent from me a specific block range
+    await daiContract.queryFilter(filterFrom, 9843470, 9843480);
+
+    // List all transfers sent in the last 10,000 blocks
+    await daiContract.queryFilter(filterFrom, -10000);
+
+    // List all transfers ever sent to me
+    await daiContract.queryFilter(filterTo);
+  }
+
   return (
     <div className="App">
       <header className="App-header">
