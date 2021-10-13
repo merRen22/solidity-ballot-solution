@@ -20,9 +20,7 @@ function App() {
       const signer = provider.getSigner();
       console.log({ signer });
       const contract = new ethers.Contract(ballotAddress, Ballot.abi, signer);
-      const theBoss = await contract.chairperson({
-        gasLimit: 3000000000,
-      });
+      const theBoss = await contract.chairperson();
       console.log(`The chairperson account is => ${theBoss} 🎉`);
     }
   }
@@ -31,19 +29,11 @@ function App() {
     if (typeof window.ethereum !== 'undefined') {
       await requestAccount();
       const provider = new ethers.providers.Web3Provider(window.ethereum);
-      console.log({ provider });
       const signer = provider.getSigner();
-
       const gasPrice = await provider.getGasPrice();
-
-      console.log({ signer });
       const contract = new ethers.Contract(ballotAddress, Ballot.abi, signer);
       const proposals = await contract.proposals(
-        ethers.utils.formatBytes32String(''),
-        {
-          gasLimit: 300000,
-          //gasPrice: gasPrice,
-        }
+        ethers.utils.formatBytes32String('')
       );
       console.log(`the winning proposal is => ${proposals.length()} 🎉`);
     }
@@ -143,13 +133,9 @@ function App() {
     <div className="App">
       <header className="App-header">
         <h1>Ballot contract</h1>
-
         <button onClick={getProposals}>Get Proposals</button>
-
         <button onClick={callWinnerName}>Get the winner</button>
-
         <button onClick={getChairperson}>Whos in charge ?</button>
-
         <a
           className="Author"
           href="https://github.com/merRen22"
