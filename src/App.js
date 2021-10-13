@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { ethers } from 'ethers';
 import Ballot from './artifacts/contracts/Ballot.sol/Ballot.json';
 
-const ballotAddress = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
+const ballotAddress = '0x038920e5C620de46C60c1Fd1e52921f3c25690fd';
 
 function App() {
   let winner = '';
@@ -21,8 +21,7 @@ function App() {
       console.log({ signer });
       const contract = new ethers.Contract(ballotAddress, Ballot.abi, signer);
       const theBoss = await contract.chairperson({
-        gasLimit: 300000,
-        gasPrice: ethers.utils.parseUnits('100', 'gwei'),
+        gasLimit: 3000000000,
       });
       console.log(`The chairperson account is => ${theBoss} 🎉`);
     }
@@ -34,12 +33,16 @@ function App() {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       console.log({ provider });
       const signer = provider.getSigner();
+
+      const gasPrice = await provider.getGasPrice();
+
       console.log({ signer });
       const contract = new ethers.Contract(ballotAddress, Ballot.abi, signer);
       const proposals = await contract.proposals(
         ethers.utils.formatBytes32String(''),
         {
-          gasLimit: 21000,
+          gasLimit: 300000,
+          //gasPrice: gasPrice,
         }
       );
       console.log(`the winning proposal is => ${proposals.length()} 🎉`);
@@ -59,6 +62,7 @@ function App() {
     }
   }
 
+  /*
   async function interactWithBlockchain() {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
@@ -121,15 +125,19 @@ function App() {
     // Filter for all token transfers to me
     filterTo = daiContract.filters.Transfer(null, myAddress);
 
+    // List all transfers ever sent to me
+    await daiContract.queryFilter(filterTo);
+
     // List all transfers sent from me a specific block range
     await daiContract.queryFilter(filterFrom, 9843470, 9843480);
 
     // List all transfers sent in the last 10,000 blocks
     await daiContract.queryFilter(filterFrom, -10000);
 
-    // List all transfers ever sent to me
-    await daiContract.queryFilter(filterTo);
+    // sign on to anything this is used like a loggin
+    signature = await signer.signMessage('Hello World');
   }
+*/
 
   return (
     <div className="App">
